@@ -1,0 +1,26 @@
+{
+  "app": {
+    "name": "MyAwesomeApp",
+    "version": "1.0.0",
+    "debug": true,
+    "port": 8080
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "myapp_db",
+    "user": "admin",
+    "password": "secret123"
+  },
+  "api": {
+    "timeout": 30,
+    "retry_count": 3,
+    "rate_limit": 1000
+  },
+  "features": ["auth", "logging", "metrics", "caching"],
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "output": "stdout"
+  }
+}
