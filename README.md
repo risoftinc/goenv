@@ -277,6 +277,10 @@ go test -v
 
 See the `example/` folder for complete usage examples with various file formats.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes.
+
 ## License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
