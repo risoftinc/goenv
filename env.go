@@ -87,8 +87,38 @@ func loadKeyValueFile(filename string) error {
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
-		// Skip empty lines and comments
+		// Skip empty lines and full-line comments
 		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// Find the first # that's not inside quotes
+		commentIndex := -1
+		inQuotes := false
+		quoteChar := byte(0)
+
+		for i := 0; i < len(line); i++ {
+			char := line[i]
+			if !inQuotes && char == '#' {
+				commentIndex = i
+				break
+			}
+			if !inQuotes && (char == '"' || char == '\'') {
+				inQuotes = true
+				quoteChar = char
+			} else if inQuotes && char == quoteChar {
+				inQuotes = false
+				quoteChar = 0
+			}
+		}
+
+		// Remove comment if found
+		if commentIndex != -1 {
+			line = strings.TrimSpace(line[:commentIndex])
+		}
+
+		// Skip if line becomes empty after removing comment
+		if line == "" {
 			continue
 		}
 

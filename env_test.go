@@ -418,13 +418,16 @@ EMPTY_VALUE=
 QUOTED_VALUE="quoted string"
 SINGLE_QUOTED='single quoted'
 INVALID_LINE=value=extra=equals
+CONNECTION=MYSQL  #Mysql, Postgres, Etc
+DATABASE_URL=postgres://user:pass@localhost/db  # Database connection string
+API_KEY="secret-key"  # API key for external services
 `
 
 	tmpFile := createTempFile(t, ".env", content)
 	defer os.Remove(tmpFile)
 
 	// Clear any existing environment variables
-	envVars := []string{"APP_NAME", "APP_VERSION", "DEBUG", "PORT", "EMPTY_VALUE", "QUOTED_VALUE", "SINGLE_QUOTED"}
+	envVars := []string{"APP_NAME", "APP_VERSION", "DEBUG", "PORT", "EMPTY_VALUE", "QUOTED_VALUE", "SINGLE_QUOTED", "CONNECTION", "DATABASE_URL", "API_KEY"}
 	for _, envVar := range envVars {
 		os.Unsetenv(envVar)
 	}
@@ -446,6 +449,62 @@ INVALID_LINE=value=extra=equals
 		{"EMPTY_VALUE", ""},
 		{"QUOTED_VALUE", "quoted string"},
 		{"SINGLE_QUOTED", "single quoted"},
+		{"CONNECTION", "MYSQL"},
+		{"DATABASE_URL", "postgres://user:pass@localhost/db"},
+		{"API_KEY", "secret-key"},
+	}
+
+	for _, tt := range tests {
+		if got := os.Getenv(tt.key); got != tt.value {
+			t.Errorf("Environment variable %s = %v, want %v", tt.key, got, tt.value)
+		}
+	}
+
+	// Clean up
+	for _, envVar := range envVars {
+		os.Unsetenv(envVar)
+	}
+}
+
+func TestLoadKeyValueFileWithInlineComments(t *testing.T) {
+	// Test various inline comment scenarios
+	content := `# Test inline comments
+VALUE_WITH_COMMENT=test  # This is a comment
+QUOTED_WITH_COMMENT="test value"  # Comment after quoted value
+SINGLE_QUOTED_WITH_COMMENT='test value'  # Comment after single quoted value
+HASH_IN_QUOTES="test#value"  # This should not be treated as comment
+SINGLE_HASH_IN_QUOTES='test#value'  # This should not be treated as comment
+MULTIPLE_HASH="test#value#here"  # Only the last # should be treated as comment
+EMPTY_AFTER_COMMENT=  # This should result in empty value
+`
+
+	tmpFile := createTempFile(t, ".env", content)
+	defer os.Remove(tmpFile)
+
+	// Clear any existing environment variables
+	envVars := []string{"VALUE_WITH_COMMENT", "QUOTED_WITH_COMMENT", "SINGLE_QUOTED_WITH_COMMENT",
+		"HASH_IN_QUOTES", "SINGLE_HASH_IN_QUOTES", "MULTIPLE_HASH", "EMPTY_AFTER_COMMENT"}
+	for _, envVar := range envVars {
+		os.Unsetenv(envVar)
+	}
+
+	err := loadKeyValueFile(tmpFile)
+	if err != nil {
+		t.Fatalf("loadKeyValueFile() error = %v", err)
+	}
+
+	// Test loaded values
+	tests := []struct {
+		key   string
+		value string
+	}{
+		{"VALUE_WITH_COMMENT", "test"},
+		{"QUOTED_WITH_COMMENT", "test value"},
+		{"SINGLE_QUOTED_WITH_COMMENT", "test value"},
+		{"HASH_IN_QUOTES", "test#value"},
+		{"SINGLE_HASH_IN_QUOTES", "test#value"},
+		{"MULTIPLE_HASH", "test#value#here"},
+		{"EMPTY_AFTER_COMMENT", ""},
 	}
 
 	for _, tt := range tests {
