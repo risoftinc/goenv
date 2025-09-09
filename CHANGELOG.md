@@ -15,11 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 - 
 
-## [1.0.1] - 2025-09-06
+## [1.1.0] - 2025-09-09
 
-### Fixed
-- 🐛 **Inline comments in .env files**: Fixed parser to properly handle inline comments in key-value format files
-  - Parser now correctly distinguishes between `#` inside quotes vs `#` as comment delimiter
-  - Supports both single and double quotes
-  - Handles multiple `#` characters in a single line correctly
-  - Examples that now work: `CONNECTION=MYSQL  #Mysql, Postgres, Etc`
+### Added
+- ✨ **Duration support**: Added `time.Duration` type conversion support
+  - Generic function: `goenv.GetEnv("TIMEOUT", 30*time.Second)`
+  - Convenience function: `goenv.GetEnvDuration("TIMEOUT", 30*time.Second)`
+  - Supports all Go duration formats: `30s`, `5m`, `2h`, `1h30m45s`, etc.

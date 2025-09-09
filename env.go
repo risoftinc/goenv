@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -239,6 +240,12 @@ func GetEnv[T any](key string, defaultVal T) T {
 			return defaultVal
 		}
 		return any(parsed).(T)
+	case time.Duration:
+		parsed, err := time.ParseDuration(val)
+		if err != nil {
+			return defaultVal
+		}
+		return any(parsed).(T)
 	case string:
 		return any(val).(T)
 	default:
@@ -271,5 +278,10 @@ func GetEnvBool(key string, defaultVal bool) bool {
 
 // GetEnvFloat64 is a convenience function for getting float64 values
 func GetEnvFloat64(key string, defaultVal float64) float64 {
+	return GetEnv(key, defaultVal)
+}
+
+// GetEnvDuration is a convenience function for getting time.Duration values
+func GetEnvDuration(key string, defaultVal time.Duration) time.Duration {
 	return GetEnv(key, defaultVal)
 }

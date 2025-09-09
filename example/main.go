@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/risoftinc/goenv"
 )
@@ -81,8 +82,20 @@ func main() {
 	genericString := goenv.GetEnv("app.name", "DefaultApp")
 	genericInt := goenv.GetEnv("app.port", 8080)
 	genericBool := goenv.GetEnv("app.debug", false)
+	genericDuration := goenv.GetEnv("timeout", 30*time.Second)
 
 	fmt.Printf("Generic String: %s\n", genericString)
 	fmt.Printf("Generic Int: %d\n", genericInt)
 	fmt.Printf("Generic Bool: %t\n", genericBool)
+	fmt.Printf("Generic Duration: %v\n", genericDuration)
+
+	// Example 7: Duration support
+	fmt.Println("\n=== Duration Support ===")
+	timeoutData := goenv.GetEnvDuration("TIMEOUT", 30*time.Second)
+	retryInterval := goenv.GetEnvDuration("RETRY_INTERVAL", 5*time.Minute)
+	cleanupInterval := goenv.GetEnvDuration("CLEANUP_INTERVAL", 1*time.Hour)
+
+	fmt.Printf("Timeout: %v\n", timeoutData)
+	fmt.Printf("Retry Interval: %v\n", retryInterval)
+	fmt.Printf("Cleanup Interval: %v\n", cleanupInterval)
 }

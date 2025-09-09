@@ -3,6 +3,7 @@ package goenv
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func TestLoadEnv(t *testing.T) {
@@ -792,12 +793,14 @@ func TestConvenienceFunctions(t *testing.T) {
 	os.Setenv("TEST_INT", "42")
 	os.Setenv("TEST_BOOL", "true")
 	os.Setenv("TEST_FLOAT", "3.14")
+	os.Setenv("TEST_DURATION", "30s")
 
 	defer func() {
 		os.Unsetenv("TEST_STRING")
 		os.Unsetenv("TEST_INT")
 		os.Unsetenv("TEST_BOOL")
 		os.Unsetenv("TEST_FLOAT")
+		os.Unsetenv("TEST_DURATION")
 	}()
 
 	t.Run("GetEnvString", func(t *testing.T) {
@@ -827,6 +830,91 @@ func TestConvenienceFunctions(t *testing.T) {
 			t.Errorf("GetEnvFloat64() = %v, want 3.14", got)
 		}
 	})
+
+	t.Run("GetEnvDuration", func(t *testing.T) {
+		got := GetEnvDuration("TEST_DURATION", 0)
+		expected := 30 * time.Second
+		if got != expected {
+			t.Errorf("GetEnvDuration() = %v, want %v", got, expected)
+		}
+	})
+}
+
+func TestGetEnv_Duration(t *testing.T) {
+	tests := []struct {
+		name       string
+		key        string
+		value      string
+		defaultVal time.Duration
+		want       time.Duration
+		clearEnv   bool
+	}{
+		{
+			name:       "valid duration seconds",
+			key:        "TEST_DURATION_SEC",
+			value:      "30s",
+			defaultVal: 0,
+			want:       30 * time.Second,
+		},
+		{
+			name:       "valid duration minutes",
+			key:        "TEST_DURATION_MIN",
+			value:      "5m",
+			defaultVal: 0,
+			want:       5 * time.Minute,
+		},
+		{
+			name:       "valid duration hours",
+			key:        "TEST_DURATION_HOUR",
+			value:      "2h",
+			defaultVal: 0,
+			want:       2 * time.Hour,
+		},
+		{
+			name:       "valid duration milliseconds",
+			key:        "TEST_DURATION_MS",
+			value:      "500ms",
+			defaultVal: 0,
+			want:       500 * time.Millisecond,
+		},
+		{
+			name:       "valid duration complex",
+			key:        "TEST_DURATION_COMPLEX",
+			value:      "1h30m45s",
+			defaultVal: 0,
+			want:       1*time.Hour + 30*time.Minute + 45*time.Second,
+		},
+		{
+			name:       "invalid duration",
+			key:        "INVALID_DURATION",
+			value:      "not_a_duration",
+			defaultVal: 10 * time.Second,
+			want:       10 * time.Second,
+		},
+		{
+			name:       "non-existing env var",
+			key:        "NON_EXISTENT_DURATION",
+			value:      "",
+			defaultVal: 60 * time.Second,
+			want:       60 * time.Second,
+			clearEnv:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.clearEnv {
+				os.Unsetenv(tt.key)
+			} else {
+				os.Setenv(tt.key, tt.value)
+			}
+
+			got := GetEnv(tt.key, tt.defaultVal)
+			if got != tt.want {
+				t.Errorf("GetEnv() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
 // Helper function to create temporary files for testing

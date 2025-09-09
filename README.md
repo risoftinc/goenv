@@ -7,7 +7,7 @@ GoEnv is a Go package that allows you to load environment variables from multipl
 - ✅ **Multi-format support**: Key-value (.env), JSON (.json), and YAML (.yaml/.yml)
 - ✅ **Nested values**: Support for nested data structures with dot notation
 - ✅ **Auto-detection**: Automatically detects file format based on extension
-- ✅ **Type conversion**: Automatic conversion to various data types (string, int, bool, float64, etc.)
+- ✅ **Type conversion**: Automatic conversion to various data types (string, int, bool, float64, time.Duration, etc.)
 - ✅ **Generic functions**: Uses Go generics for type safety
 - ✅ **Convenience functions**: Helper functions for common data types
 - ✅ **Easy migration**: Simple API for loading environment variables
@@ -152,9 +152,45 @@ appName := goenv.GetEnv("APP_NAME", "DefaultApp")        // string
 port := goenv.GetEnv("PORT", 8080)                       // int
 debug := goenv.GetEnv("DEBUG", false)                    // bool
 timeout := goenv.GetEnv("TIMEOUT", 30.5)                 // float64
+duration := goenv.GetEnv("CACHE_DURATION", 5*time.Minute) // time.Duration
 ```
 
-### 6. Nested Keys with GetEnvNested
+### 6. Duration Support
+
+```go
+package main
+
+import (
+    "fmt"
+    "time"
+    "github.com/risoftinc/goenv"
+)
+
+func main() {
+    err := goenv.LoadEnv("config.env")
+    if err != nil {
+        panic(err)
+    }
+
+    // Get duration values
+    timeout := goenv.GetEnvDuration("TIMEOUT", 30*time.Second)
+    retryInterval := goenv.GetEnvDuration("RETRY_INTERVAL", 5*time.Minute)
+    cleanupInterval := goenv.GetEnvDuration("CLEANUP_INTERVAL", 1*time.Hour)
+
+    fmt.Printf("Timeout: %v\n", timeout)
+    fmt.Printf("Retry Interval: %v\n", retryInterval)
+    fmt.Printf("Cleanup Interval: %v\n", cleanupInterval)
+}
+```
+
+**config.env:**
+```env
+TIMEOUT=45s
+RETRY_INTERVAL=2m30s
+CLEANUP_INTERVAL=6h
+```
+
+### 7. Nested Keys with GetEnvNested
 
 ```go
 // GetEnvNested converts dot notation to UPPER_CASE with underscore
@@ -197,6 +233,7 @@ func GetEnvString(key string, defaultVal string) string
 func GetEnvInt(key string, defaultVal int) int
 func GetEnvBool(key string, defaultVal bool) bool
 func GetEnvFloat64(key string, defaultVal float64) float64
+func GetEnvDuration(key string, defaultVal time.Duration) time.Duration
 ```
 
 ### Types
