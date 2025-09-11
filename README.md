@@ -15,7 +15,7 @@ GoEnv is a Go package that allows you to load environment variables from multipl
 ## Installation
 
 ```bash
-go get github.com/risoftinc/goenv
+go get go.risoftinc.com/goenv
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ package main
 
 import (
     "fmt"
-    "github.com/risoftinc/goenv"
+    "go.risoftinc.com/goenv"
 )
 
 func main() {
@@ -60,7 +60,7 @@ package main
 
 import (
     "fmt"
-    "github.com/risoftinc/goenv"
+    "go.risoftinc.com/goenv"
 )
 
 func main() {
@@ -99,7 +99,7 @@ package main
 
 import (
     "fmt"
-    "github.com/risoftinc/goenv"
+    "go.risoftinc.com/goenv"
 )
 
 func main() {
@@ -163,7 +163,7 @@ package main
 import (
     "fmt"
     "time"
-    "github.com/risoftinc/goenv"
+    "go.risoftinc.com/goenv"
 )
 
 func main() {
@@ -292,7 +292,7 @@ func main() {
 
 **With GoEnv:**
 ```go
-import "github.com/risoftinc/goenv"
+import "go.risoftinc.com/goenv"
 
 func main() {
     err := goenv.LoadEnv("config.env")

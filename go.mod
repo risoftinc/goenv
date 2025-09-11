@@ -1,4 +1,4 @@
-module github.com/risoftinc/goenv
+module go.risoftinc.com/goenv
 
 go 1.24.6
 
