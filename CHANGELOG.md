@@ -15,10 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 - 
 
-## [1.1.0] - 2025-09-09
+## [1.1.1] - 2025-09-11
 
-### Added
-- ✨ **Duration support**: Added `time.Duration` type conversion support
-  - Generic function: `goenv.GetEnv("TIMEOUT", 30*time.Second)`
-  - Convenience function: `goenv.GetEnvDuration("TIMEOUT", 30*time.Second)`
-  - Supports all Go duration formats: `30s`, `5m`, `2h`, `1h30m45s`, etc.
+### Changed
+- Changed module name from github.com to personal go.risoftinc.com

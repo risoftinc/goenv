@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/risoftinc/goenv"
+	"go.risoftinc.com/goenv"
 )
 
 func main() {
